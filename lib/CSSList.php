@@ -175,7 +175,7 @@ class CSSDocument extends CSSList {
    * Merge multiple CSS RuleSets by cascading according to the CSS 2.1 cascading rules 
    * (http://www.w3.org/TR/REC-CSS2/cascade.html#cascading-order).
    * 
-   * @param $aDetails an array of CSSDeclarationBlock objects.
+   * @param $aDeclarations an array of CSSDeclarationBlock objects.
    * @returns a CSSDeclarationBlock.
    * 
    * ==== Cascading
@@ -191,13 +191,7 @@ class CSSDocument extends CSSList {
    * ==== Example #1
    *   $oDecl_1 = new CSSDeclarationBlock();
    *   $oRule_1 = new CSSRule('color');
-   *   $oRule_1->addValue(
-   *     new CSSColor(array(
-   *       'r' => new CSSSize(255,null,true),
-   *       'g' => new CSSSize(0,null,true),
-   *       'b' => new CSSSize(0,null,true),
-   *     ))
-   *   );
+   *   $oRule_1->addValue(new CSSColor('#F00'));
    *   $oDecl_1->addRule($oRule_1);
    *   $oDecl_2 = new CSSDeclarationBlock();
    *   $oRule_2 = new CSSRule('margin');
@@ -214,13 +208,7 @@ class CSSDocument extends CSSList {
    * ==== Example #2
    *   $oDecl_1 = new CSSDeclarationBlock();
    *   $oRule_1 = new CSSRule('background-color');
-   *   $oRule_1->addValue(
-   *     new CSSColor(array(
-   *       'r' => new CSSSize(0,null,true),
-   *       'g' => new CSSSize(0,null,true),
-   *       'b' => new CSSSize(0,null,true),
-   *     ))
-   *   );
+   *   $oRule_1->addValue(new CSSColor('black'));
    *   $oDecl_1->addRule($oRule_1);
    *   $oDecl_2 = new CSSDeclarationBlock();
    *   $oRule_2 = new CSSRule('background-image');
