@@ -170,6 +170,117 @@ class CSSDocument extends CSSList {
       $oDeclaration->createShorthands();
     }
   }
+
+  /**
+   * Merge multiple CSS RuleSets by cascading according to the CSS 2.1 cascading rules 
+   * (http://www.w3.org/TR/REC-CSS2/cascade.html#cascading-order).
+   * 
+   * @param $aDeclarations an array of CSSDeclarationBlock objects.
+   * @returns a CSSDeclarationBlock.
+   * 
+   * ==== Cascading
+   * If a CSSDeclarationBlock object has its +specificity+ defined, that specificity is 
+   * used in the cascade calculations.  
+   * 
+   * If no specificity is explicitly set and the CSSDeclarationBlock has *one* selector, 
+   * the specificity is calculated using that selector.
+   * 
+   * If no selectors or multiple selectors are present, the specificity is 
+   * treated as 0.
+   * 
+   * ==== Example #1
+   *   $oDecl_1 = new CSSDeclarationBlock();
+   *   $oRule_1 = new CSSRule('color');
+   *   $oRule_1->addValue(new CSSColor('#F00'));
+   *   $oDecl_1->addRule($oRule_1);
+   *   $oDecl_2 = new CSSDeclarationBlock();
+   *   $oRule_2 = new CSSRule('margin');
+   *   $oRule_2->addValue(
+   *     new CSSSize(0, 'px')
+   *   );
+   *   $oDecl_2->addRule($oRule_2);
+   * 
+   *   $oMerged = CSSDocument::mergeDeclarations($oDecl_1, $oDecl_2);
+   * 
+   *   echo $oMerged;
+   *   => "{ margin: 0px; color: rgb(255,0,0); }"
+   * 
+   * ==== Example #2
+   *   $oDecl_1 = new CSSDeclarationBlock();
+   *   $oRule_1 = new CSSRule('background-color');
+   *   $oRule_1->addValue(new CSSColor('black'));
+   *   $oDecl_1->addRule($oRule_1);
+   *   $oDecl_2 = new CSSDeclarationBlock();
+   *   $oRule_2 = new CSSRule('background-image');
+   *   $oRule_2->addValue('none');
+   *   $oDecl_2->addRule($oRule_2);
+   * 
+   *   $oMerged = CSSDocument::mergeDeclarations($oDecl_1, $oDecl_2);
+   * 
+   *   echo $oMerged;
+   *   => "{ background: none rgb(0,0,0); }"
+   **/
+  static function mergeDeclarations(Array $aDeclarations)
+  {
+    // Internal storage of CSS properties that we will keep
+    $aProperties = array();
+    foreach($aDeclarations as $oDeclaration)
+    {
+      $oDeclaration->expandShorthands();
+      $aSelectors = $oDeclaration->getSelectors();
+      $iSpecificity = 0;
+      if(count($aSelectors) == 1)
+      {
+        $iSpecificity = $aSelectors[0]->getSpecificity();
+      }
+      foreach($oDeclaration->getRules() as $sProperty => $oRule)
+      {
+        // Add the property to the list to be folded per
+        // http://www.w3.org/TR/CSS21/cascade.html#cascading-order 
+        if(!isset($aProperties[$sProperty]))
+        {
+          $aProperties[$sProperty] = array(
+            'values' => $oRule->getValues(),
+            'specificity' => $iSpecificity,
+            'important' => $oRule->getIsImportant()
+          );
+        }
+        else
+        {
+          $aProperty = $aProperties[$sProperty];
+          if($aProperty['specificity'] <= $iSpecificity && !$aProperty['important'])
+          {
+            $aProperties[$sProperty] = array(
+              'values' => $oRule->getValues(),
+              'specificity' => $iSpecificity,
+              'important' => $oRule->getIsImportant()
+            );
+          }
+        }
+        if($oRule->getIsImportant())
+        {
+          $aProperties[$sProperty] = array(
+            'values' => $oRule->getValues(),
+            'specificity' => $iSpecificity,
+            'important' => $oRule->getIsImportant()
+          );
+        }
+      } // end foreach rules
+    } // end foreach rulesets
+    $oMerged = new CSSDeclarationBlock();
+    foreach($aProperties as $sProperty => $aDetails)
+    {
+      $oNewRule = new CSSRule($sProperty);
+      $oNewRule->setValues($aDetails['values']);
+      if($aDetails['important'])
+      {
+        $oNewRule->setIsImportant(true);
+      }
+      $oMerged->addRule($oNewRule);
+    }
+    $oMerged->createShorthands();
+    return $oMerged;
+  }
 }
 
 /**
