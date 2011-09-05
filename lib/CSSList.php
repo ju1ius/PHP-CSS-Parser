@@ -271,7 +271,9 @@ class CSSDocument extends CSSList {
     foreach($aProperties as $sProperty => $aDetails)
     {
       $oNewRule = new CSSRule($sProperty);
-      $oNewRule->setValues($aDetails['values']);
+      foreach($aDetails['values'] as $aValue) {
+        $oNewRule->addvalue($aValue); 
+      }
       if($aDetails['important'])
       {
         $oNewRule->setIsImportant(true);

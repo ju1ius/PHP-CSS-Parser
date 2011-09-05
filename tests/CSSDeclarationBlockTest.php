@@ -217,6 +217,37 @@ class CSSDeclarationBlockTest extends PHPUnit_Framework_TestCase
       array('body {background-color: rgb(255,0,0);background-image: url(foobar.png);background-repeat: no-repeat;}', 'body {background: rgb(255,0,0) url("foobar.png") no-repeat;}'),
       array('body {background-color: rgb(255,0,0);background-image: url(foobar.png);background-repeat: no-repeat;background-position: center;}', 'body {background: rgb(255,0,0) url("foobar.png") no-repeat center;}'),
       array('body {background-color: rgb(255,0,0);background-image: url(foobar.png);background-repeat: no-repeat;background-position: top left;}', 'body {background: rgb(255,0,0) url("foobar.png") no-repeat top left;}'),
+      array('body {background-color: rgb(255,0,0);background-image: url(foobar.png);background-repeat: no-repeat;background-position: 0% 0%;}', 'body {background: rgb(255,0,0) url("foobar.png") no-repeat 0% 0%;}'),
+    );
+  }
+
+  /**
+   * @dataProvider expandCreateShorthandsProvider
+   *
+   * @depends testExpandBorderShorthand
+   * @depends testExpandDimensionsShorthand
+   * @depends testExpandBackgroundShorthand
+   * @depends testExpandFontShorthand
+   * @depends testCreateBorderShorthand
+   * @depends testCreateDimensionsShorthand
+   * @depends testCreateBackgroundShorthand
+   * @depends testCreateFontShorthand
+   **/
+  public function testExpandCreateShorthands($sCss, $sExpected)
+  {
+    $oParser = new CSSParser($sCss);
+    $oDoc = $oParser->parse();
+    $oDoc->expandShorthands();
+    $oDoc->createShorthands();
+    $this->assertEquals((string)$oDoc, $sExpected);   
+  }
+  public function expandCreateShorthandsProvider()
+  {
+    return array(
+      array(
+        'body {margin: 0 1em;background: red url(foobar.png) repeat-x}',
+        'body {background: rgb(255,0,0) url("foobar.png") repeat-x 0% 0% scroll;margin: 0 1em;}'
+      )  
     );
   }
 
