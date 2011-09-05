@@ -149,7 +149,7 @@ class CSSParserTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('@charset "utf-8";@font-face {font-family: "CrassRoots";src: url("../media/cr.ttf");}#my_id html, #my_id body {font-size: 1.6em;}', $oDoc->__toString());
 
 		$oDoc = $this->parsedStructureForFile('values');
-		$this->assertSame('#header {margin: 10px 2em 1cm 2%;font-family: Verdana, Helvetica, "Gill Sans", sans-serif;font-size: 10px;color: rgb(255,0,0) !important;}body {color: rgb(0,128,0);font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;}', $oDoc->__toString());
+		$this->assertSame('#header {margin: 10px 2em 1cm 2%;font-family: Verdana,Helvetica,"Gill Sans",sans-serif;font-size: 10px;color: rgb(255,0,0) !important;}body {color: rgb(0,128,0);font: 75% "Lucida Grande","Trebuchet MS",Verdana,sans-serif;}', $oDoc->__toString());
 		foreach($oDoc->getAllRuleSets() as $oRuleSet) {
 			$oRuleSet->removeRule('font-');
 		}
