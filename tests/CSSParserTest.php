@@ -4,7 +4,7 @@
 
 require_once(dirname(__FILE__).'/../CSSParser.php');
 
-class CSSParserTests extends PHPUnit_Framework_TestCase {
+class CSSParserTest extends PHPUnit_Framework_TestCase {
 	function testCssFiles() {
 		
 		$sDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR.'files';
@@ -149,11 +149,7 @@ class CSSParserTests extends PHPUnit_Framework_TestCase {
 		$this->assertSame('@charset "utf-8";@font-face {font-family: "CrassRoots";src: url("../media/cr.ttf");}#my_id html, #my_id body {font-size: 1.6em;}', $oDoc->__toString());
 
 		$oDoc = $this->parsedStructureForFile('values');
-<<<<<<< HEAD:tests/CSSParserTests.php
-		$this->assertSame('#header {margin: 10px 2em 1cm 2%;font-family: Verdana,Helvetica,"Gill Sans",sans-serif;font-size: 10px;color: red !important;}body {color: green;font: 75% "Lucida Grande","Trebuchet MS",Verdana,sans-serif;}', $oDoc->__toString());
-=======
 		$this->assertSame('#header {margin: 10px 2em 1cm 2%;font-family: Verdana, Helvetica, "Gill Sans", sans-serif;font-size: 10px;color: rgb(255,0,0) !important;}body {color: rgb(0,128,0);font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;}', $oDoc->__toString());
->>>>>>> color:tests/CSSParserTest.php
 		foreach($oDoc->getAllRuleSets() as $oRuleSet) {
 			$oRuleSet->removeRule('font-');
 		}
