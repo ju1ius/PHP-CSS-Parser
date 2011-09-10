@@ -30,6 +30,7 @@ class CSSParser {
 	private $sText;
 	private $iCurrentPosition;
 	private $iLength;
+  private $aLoadedFiles = array();
 
   /**
    * Data for resolving imports
@@ -78,10 +79,14 @@ class CSSParser {
 			return $this->sCharset;
 	}
 
+  public function getLoadedFiles() {
+    return $this->aLoadedFiles;
+  }
+
   /**
    * @param $sPath    string path to a file to load
    **/
-  public function parseFile($sPath)
+  public function parseFile($sPath, $aLoadedFiles=array())
   {
     if(!$this->aOptions['base_url']) {
       $this->aOptions['base_url'] = dirname($sPath);
@@ -91,21 +96,27 @@ class CSSParser {
     }
     //printf(">>> Parsing %s in %s\n", $sPath, $this->aOptions['base_url']);
     $this->sImportMode = self::IMPORT_FILE;
+    $sPath = realpath($sPath);
+    $aLoadedFiles[] = $sPath;
+    $this->aLoadedFiles = array_merge($this->aLoadedFiles, $aLoadedFiles);
     $sCss = file_get_contents($sPath);
     return $this->parseString($sCss);
   }
 
-  public function parseURL($sPath)
+  public function parseURL($sPath, $aLoadedFiles=array())
   {
     if(!$this->aOptions['base_url']) {
       $this->aOptions['base_url'] = dirname($sPath);
     }
+    //printf(">>> Parsing %s in %s\n", $sPath, $this->aOptions['base_url']);
     //if($this->aOptions['absolute_urls'] && !CSSUrlUtils::isAbsUrl($this->aOptions['base_url'])) {
       //$sProtocol = $_SERVER['HTTPS'] ? 'https' : 'http';
       //$sPath = $sProtocol.'://'.$_SERVER['HTTP_HOST'].'/'.ltrim($sPath, '/');
       //$this->aOptions['base_url'] = dirname($sPath);
     //}
     $this->sImportMode = self::IMPORT_URL;
+    $aLoadedFiles[] =$sPath;
+    $this->aLoadedFiles = array_merge($this->aLoadedFiles, $aLoadedFiles);
     $sCss = CSSUrlUtils::loadURL($sPath);
     return $this->parseString($sCss);
   }
@@ -148,11 +159,18 @@ class CSSParser {
         $parser = new CSSParser($aImportOptions);
         $sPath = $oImport->getLocation()->getURL()->getString();
         if($this->sImportMode == self::IMPORT_URL) {
-          $oImportedDoc = $parser->parseURL($sPath, null, $this->getCharset());
-          $aImportedContents = $oImportedDoc->getContents();
+          if(!in_array($sPath, $this->aLoadedFiles)) {          
+            $oImportedDoc = $parser->parseURL($sPath, $this->aLoadedFiles);
+            $this->aLoadedFiles = $parser->getLoadedFiles();
+            $aImportedContents = $oImportedDoc->getContents();
+          }
         } else if($this->sImportMode == self::IMPORT_FILE) {
-          $oImportedDoc = $parser->parseFile($sPath);
-          $aImportedContents = $oImportedDoc->getContents();
+          $sPath = realpath($sPath);
+          if(!in_array($sPath, $this->aLoadedFiles)) {
+            $oImportedDoc = $parser->parseFile($sPath, $this->aLoadedFiles);
+            $this->aLoadedFiles = $parser->getLoadedFiles();
+            $aImportedContents = $oImportedDoc->getContents();
+          }
         }
         if($oImport->getMediaQuery() !== null) {
           $sMediaQuery = $oImport->getMediaQuery();
