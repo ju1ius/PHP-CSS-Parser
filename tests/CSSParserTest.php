@@ -22,9 +22,10 @@ class CSSParserTest extends PHPUnit_Framework_TestCase {
 					continue;
 				}
 				$file = $sDirectory.DIRECTORY_SEPARATOR.$sFileName;
-				$oParser = new CSSParser(file_get_contents($file));
+				$oParser = new CSSParser();
+        $oDoc = $oParser->parseString($file);
 				try {
-					$this->assertNotEquals('', $oParser->parse()->__toString());
+					$this->assertNotEquals('', $oDoc->__toString());
 				} catch(Exception $e) {
 					$this->fail($e);
 				}
@@ -229,7 +230,7 @@ class CSSParserTest extends PHPUnit_Framework_TestCase {
 
 	function parsedStructureForFile($sFileName) {
 		$sFile = dirname(__FILE__).DIRECTORY_SEPARATOR.'files'.DIRECTORY_SEPARATOR."$sFileName.css";
-		$oParser = new CSSParser(file_get_contents($sFile));
-		return $oParser->parse();
+		$oParser = new CSSParser();
+		return $oParser->parseString(file_get_contents($sFile));
 	}
 }
