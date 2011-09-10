@@ -235,8 +235,8 @@ class CSSDeclarationBlockTest extends PHPUnit_Framework_TestCase
    **/
   public function testExpandCreateShorthands($sCss, $sExpected)
   {
-    $oParser = new CSSParser($sCss);
-    $oDoc = $oParser->parse();
+    $oParser = new CSSParser();
+    $oDoc = $oParser->parseString($sCss);
     $oDoc->expandShorthands();
     $oDoc->createShorthands();
     $this->assertEquals((string)$oDoc, $sExpected);   

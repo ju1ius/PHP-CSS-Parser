@@ -5,9 +5,23 @@
 require_once(dirname(__FILE__).'/../CSSParser.php');
 
 class CSSParserTest extends PHPUnit_Framework_TestCase {
-	function testCssFiles() {
-		
-		$sDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR.'files';
+
+  /**
+   * @dataProvider testCssFilesProvider
+   **/
+  public function testCssFiles($sFile, $sExpected) {
+    $oParser = new CSSParser();
+    $oDoc = $oParser->parseFile($sFile);
+    try {
+      $this->assertNotEquals($sExpected, $oDoc->__toString());
+    } catch(Exception $e) {
+      $this->fail($e);
+    }
+  }
+  public function testCssFilesProvider()
+  {
+    $sDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR.'files';
+    $aFiles = array();
 		if($rHandle = opendir($sDirectory)) {
 			/* This is the correct way to loop over the directory. */
 			while (false !== ($sFileName = readdir($rHandle))) {
@@ -21,18 +35,12 @@ class CSSParserTest extends PHPUnit_Framework_TestCase {
 					//Either a file which SHOULD fail or a future test of a as-of-now missing feature
 					continue;
 				}
-				$file = $sDirectory.DIRECTORY_SEPARATOR.$sFileName;
-				$oParser = new CSSParser();
-        $oDoc = $oParser->parseString($file);
-				try {
-					$this->assertNotEquals('', $oDoc->__toString());
-				} catch(Exception $e) {
-					$this->fail($e);
-				}
+				$aFiles[] = array($sDirectory.DIRECTORY_SEPARATOR.$sFileName, '');
 			}
 			closedir($rHandle);
-		}
-	}
+    }
+    return $aFiles;
+  }
 	
 	/**
 	* @depends testCssFiles
