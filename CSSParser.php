@@ -158,7 +158,8 @@ class CSSParser {
       if($this->aOptions['resolve_imports']) {
         $parser = new CSSParser($aImportOptions);
         $sPath = $oImport->getLocation()->getURL()->getString();
-        if($this->sImportMode == self::IMPORT_URL) {
+        $bIsAbsURL = CSSUrlUtils::isAbsUrl($sPath);
+        if($this->sImportMode == self::IMPORT_URL || $bIsAbsURL) {
           if(!in_array($sPath, $this->aLoadedFiles)) {          
             $oImportedDoc = $parser->parseURL($sPath, $this->aLoadedFiles);
             $this->aLoadedFiles = $parser->getLoadedFiles();
