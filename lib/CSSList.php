@@ -197,8 +197,9 @@ class CSSDocument extends CSSList {
    * Merge multiple CSS RuleSets by cascading according to the CSS 2.1 cascading rules 
    * (http://www.w3.org/TR/REC-CSS2/cascade.html#cascading-order).
    * 
-   * @param $aDeclarations an array of CSSDeclarationBlock objects.
-   * @returns a CSSDeclarationBlock.
+	 * @param array $aDeclarations An array of CSSDeclarationBlock objects.
+	 *
+   * @return CSSDeclarationBlock.
    * 
    * ==== Cascading
    * If a CSSDeclarationBlock object has its +specificity+ defined, that specificity is 
@@ -211,6 +212,7 @@ class CSSDocument extends CSSList {
    * treated as 0.
    * 
    * ==== Example #1
+	 * <code>
    *   $oDecl_1 = new CSSDeclarationBlock();
    *   $oRule_1 = new CSSRule('color');
    *   $oRule_1->addValue(new CSSColor('#F00'));
@@ -225,9 +227,10 @@ class CSSDocument extends CSSList {
    *   $oMerged = CSSDocument::mergeDeclarations($oDecl_1, $oDecl_2);
    * 
    *   echo $oMerged;
-   *   => "{ margin: 0px; color: rgb(255,0,0); }"
-   * 
-   * ==== Example #2
+   *   //=> "{ margin: 0px; color: rgb(255,0,0); }"
+   * </code>
+	 * ==== Example #2
+	 * <code>
    *   $oDecl_1 = new CSSDeclarationBlock();
    *   $oRule_1 = new CSSRule('background-color');
    *   $oRule_1->addValue(new CSSColor('black'));
@@ -240,7 +243,8 @@ class CSSDocument extends CSSList {
    *   $oMerged = CSSDocument::mergeDeclarations($oDecl_1, $oDecl_2);
    * 
    *   echo $oMerged;
-   *   => "{ background: none rgb(0,0,0); }"
+	 *   //=> "{ background: none rgb(0,0,0); }"
+	 * </code>
    **/
   static function mergeDeclarations(Array $aDeclarations)
   {
