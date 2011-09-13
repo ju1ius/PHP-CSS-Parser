@@ -1,7 +1,7 @@
 <?php
 require_once('lib/CSSCharsetUtils.php');
 require_once('lib/CSSUrlUtils.php');
-require_once 'lib/ColorUtils.php';
+require_once 'lib/CSSColorUtils.php';
 require_once('lib/CSSProperties.php');
 require_once('lib/CSSList.php');
 require_once('lib/CSSRuleSet.php');
@@ -390,7 +390,7 @@ class CSSParser {
     if($bAllowColors)
     {
       // is it a color name ?
-      if($aColor = ColorUtils::namedColor2rgb($sResult))
+      if($aColor = CSSColorUtils::namedColor2rgb($sResult))
       {
 				$oColor = new CSSColor();
 				return $oColor->fromRGB($aColor);
