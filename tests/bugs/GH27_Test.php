@@ -11,8 +11,8 @@ class GH27_Test extends PHPUnit_Framework_TestCase
    **/
   public function testNamespaces($sCss, $sExpected)
   {
-    $oParser = new CSSParser($sCss);
-    $oDoc = $oParser->parse();
+    $oParser = new CSSParser();
+    $oDoc = $oParser->parseString($sCss);
     $this->assertEquals((string)$oDoc, $sExpected);
   }
   public function testNamespacesProvider()
