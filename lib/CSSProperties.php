@@ -1,8 +1,8 @@
 <?php
 
 /**
-* Class representing an @import rule.
-*/
+ * Class representing an @import rule.
+ */
 class CSSImport {
 	private $oLocation;
 	private $sMediaQuery;
@@ -30,12 +30,12 @@ class CSSImport {
 }
 
 /**
-* Class representing an @charset rule.
-* The following restrictions apply:
-* • May not be found in any CSSList other than the CSSDocument.
-* • May only appear at the very top of a CSSDocument’s contents.
-* • Must not appear more than once.
-*/
+ * Class representing an @charset rule.
+ * The following restrictions apply:
+ * • May not be found in any CSSList other than the CSSDocument.
+ * • May only appear at the very top of a CSSDocument’s contents.
+ * • Must not appear more than once.
+ */
 class CSSCharset {
 	private $sCharset;
 	
@@ -54,6 +54,44 @@ class CSSCharset {
 	public function __toString() {
 		return "@charset {$this->sCharset->__toString()};";
 	}
+}
+
+/**
+ * Class representing an @namespace rule.
+ * The following restrictions apply:
+ * <ul>
+ *   <li>May not be found in any CSSList other than the CSSDocument.</li>
+ *   <li>May only appear after all @import rules and before other @rules.</li>
+ * </ul>
+ */
+class CSSNamespace {
+  private $sPrefix;
+  private $sURI;
+
+  public function __construct($sURI, $sPrefix=null) {
+    $this->sURI = $sURI;
+    $this->sPrefix = $sPrefix;
+  }
+
+  public function getURI() {
+    return $this->sURI;
+  }
+  public function setURI($sURI) {
+    $this->sURI = $sURI;
+  }
+
+  public function getPrefix() {
+    return $this->sPrefix;
+  }
+  public function setPrefix($sPrefix) {
+    $this->sPrefix = $sPrefix;
+  }
+
+  public function __toString() {
+    $sPrefix = $this->sPrefix ? ' '.$this->sPrefix : '';
+    return "@namespace" . $sPrefix . ' ' . $this->sURI . ';';
+  }
+
 }
 
 /**
